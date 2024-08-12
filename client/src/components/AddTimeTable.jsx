@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 const AddTimeTable = ({ teacherId, classroomId }) => {
-    const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
     const [timetableData, setTimetableData] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const [newRow, setNewRow] = useState({
@@ -18,13 +17,12 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
 
     const fetchTimetable = async () => {
         try {
-            const response = await fetch(`${apiUrl}/view/timetable/${teacherId}/${classroomId}`);
+            const response = await fetch(`http://localhost:8080/view/timetable/${teacherId}/${classroomId}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
             setTimetableData(data.timetables || []);
-            console.log(data)
         } catch (error) {
             console.error('Error fetching timetable:', error);
         }
@@ -33,7 +31,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
     const handleCreate = async () => {
         console.log("Creating timetable");
         try {
-            await fetch(`${apiUrl}/create/timetable`, {
+            await fetch('http://localhost:8080/create/timetable', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...newRow, teacher: teacherId, classroom: classroomId })
@@ -57,7 +55,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
         console.log("Updating timetable");
         for (const entry of timetableData) {
             try {
-                await fetch(`${apiUrl}/update/timetable/${entry._id}`, {
+                await fetch(`http://localhost:8080/update/timetable/${entry._id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(entry)
@@ -71,7 +69,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
 
     const handleDelete = async (id) => {
         try {
-            await fetch(`${apiUrl}/delete/timetable/${id}`, { method: 'DELETE' });
+            await fetch(`http://localhost:8080/delete/timetable/${id}`, { method: 'DELETE' });
             fetchTimetable();
         } catch (error) {
             console.error('Error deleting timetable:', error);
@@ -89,7 +87,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
     };
 
     return (
-        <div className="container-ss container mx-auto p-4">
+        <div className="container mx-auto p-4">
             <h2 className="text-xl font-semibold mb-2">Timetable</h2>
 
             {timetableData.length === 0 && !isEditing ? (
@@ -101,7 +99,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
                 </button>
             ) : (
                 <>
-                    <table className="min-w-full border-gray-300 mb-4">
+                    <table className="min-w-full border border-gray-300 mb-4">
                         <thead className="bg-gray-100 border-b">
                             <tr>
                                 <th className="px-4 py-2 border-r">Subject</th>
@@ -234,9 +232,10 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
                             )}
                         </tbody>
                     </table>
+                    <div className="flex justify-end space-x-4">
                     <button
                         onClick={isEditing ? handleUpdate : () => setIsEditing(true)}
-                        className={`bg-${isEditing ? 'green' : 'blue'}-500 hover:bg-${isEditing ? 'green' : 'blue'}-600 text-white py-1 px-2 rounded mb-4`}
+                        className={`bg-${isEditing ? 'green' : 'blue'}-500 hover:bg-${isEditing ? 'green' : 'blue'}-600 text-white py-1 px-2 mx-4 rounded mb-4`}
                     >
                         {isEditing ? 'Save Changes' : 'Edit Timetable'}
                     </button>
@@ -248,6 +247,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
                             Cancel
                         </button>
                     )}
+                    </div>
                 </>
             )}
         </div>
