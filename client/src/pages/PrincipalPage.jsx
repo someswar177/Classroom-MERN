@@ -22,19 +22,19 @@ const PrincipalPage = () => {
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-6">Principal Dashboard</h1>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-4">Teachers</h2>
+        <a href='/view/teachers' className="text-2xl font-bold mb-4">Teachers</a>
         <table className="min-w-full bg-white">
           {/* Render teachers here */}
         </table>
       </div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-4">Students</h2>
+        <a href='/view/students' className="text-2xl font-bold mb-4">Students</a>
         <table className="min-w-full bg-white">
           {/* Render students here */}
         </table>
       </div>
       <div>
-        <h2 className="text-2xl font-bold mb-4">Classrooms</h2>
+        <a href='/view/classrooms' className="text-2xl font-bold mb-4">Classrooms</a>
         <table className="min-w-full bg-white">
           {/* Render classrooms here */}
         </table>
