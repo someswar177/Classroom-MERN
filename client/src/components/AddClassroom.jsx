@@ -35,7 +35,6 @@ const AddClassroom = ({ isOpen, onClose }) => {
         }
     };
     
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevData => ({
@@ -45,10 +44,12 @@ const AddClassroom = ({ isOpen, onClose }) => {
     };
 
     const handleDaysChange = (e) => {
-        const { value } = e.target;
+        const { value, checked } = e.target;
         setFormData(prevData => ({
             ...prevData,
-            days: value.split(',')
+            days: checked 
+                ? [...prevData.days, value] 
+                : prevData.days.filter(day => day !== value)
         }));
     };
 
@@ -116,13 +117,6 @@ const AddClassroom = ({ isOpen, onClose }) => {
                     <div className="flex flex-col items-center justify-center px-8 py-8 mx-auto lg:py-0">
                         <div className="w-full bg-white rounded-lg md:mt-0 sm:max-w-md xl:p-0">
                             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-                                {/* <div className="flex justify-center mb-6">
-                                    <span className="inline-block bg-gray-200 rounded-full p-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                            <path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"/>
-                                        </svg>
-                                    </span>
-                                </div> */}
                                 <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center">
                                     Add New Classroom
                                 </h1>
@@ -142,46 +136,50 @@ const AddClassroom = ({ isOpen, onClose }) => {
                                         />
                                         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                                     </div>
-                                    <div>
-                                        <label htmlFor="startTime" className="block mb-2 text-sm font-medium text-gray-900">Start Time</label>
-                                        <input
-                                            type="text"
-                                            id="startTime"
-                                            name="startTime"
-                                            value={formData.startTime}
-                                            onChange={handleChange}
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                            placeholder="Start time (e.g., 09:00)"
-                                            required
-                                        />
-                                        {errors.startTime && <p className="text-red-500 text-xs mt-1">{errors.startTime}</p>}
+                                    <div className="flex gap-4">
+                                        <div className="w-1/2">
+                                            <label htmlFor="startTime" className="block mb-2 text-sm font-medium text-gray-900">Start Time</label>
+                                            <input
+                                                type="time"
+                                                id="startTime"
+                                                name="startTime"
+                                                value={formData.startTime}
+                                                onChange={handleChange}
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                required
+                                            />
+                                            {errors.startTime && <p className="text-red-500 text-xs mt-1">{errors.startTime}</p>}
+                                        </div>
+                                        <div className="w-1/2">
+                                            <label htmlFor="endTime" className="block mb-2 text-sm font-medium text-gray-900">End Time</label>
+                                            <input
+                                                type="time"
+                                                id="endTime"
+                                                name="endTime"
+                                                value={formData.endTime}
+                                                onChange={handleChange}
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                required
+                                            />
+                                            {errors.endTime && <p className="text-red-500 text-xs mt-1">{errors.endTime}</p>}
+                                        </div>
                                     </div>
                                     <div>
-                                        <label htmlFor="endTime" className="block mb-2 text-sm font-medium text-gray-900">End Time</label>
-                                        <input
-                                            type="text"
-                                            id="endTime"
-                                            name="endTime"
-                                            value={formData.endTime}
-                                            onChange={handleChange}
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                            placeholder="End time (e.g., 17:00)"
-                                            required
-                                        />
-                                        {errors.endTime && <p className="text-red-500 text-xs mt-1">{errors.endTime}</p>}
-                                    </div>
-                                    <div>
-                                        <label htmlFor="days" className="block mb-2 text-sm font-medium text-gray-900">Days of the Week (comma-separated)</label>
-                                        <input
-                                            type="text"
-                                            id="days"
-                                            name="days"
-                                            value={formData.days.join(',')}
-                                            onChange={handleDaysChange}
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                            placeholder="e.g., Monday,Wednesday,Friday"
-                                            required
-                                        />
+                                        <label className="block mb-2 text-sm font-medium text-gray-900">Days of the Week</label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                                                <label key={day} className="inline-flex items-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        value={day}
+                                                        checked={formData.days.includes(day)}
+                                                        onChange={handleDaysChange}
+                                                        className="form-checkbox"
+                                                    />
+                                                    <span className="ml-2">{day}</span>
+                                                </label>
+                                            ))}
+                                        </div>
                                         {errors.days && <p className="text-red-500 text-xs mt-1">{errors.days}</p>}
                                     </div>
                                     <div>

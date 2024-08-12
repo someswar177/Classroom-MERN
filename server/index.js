@@ -162,8 +162,15 @@ app.post('/add/classroom', async (req, res) => {
     const trimmedTeacher = teacher.trim();
     const trimmedDays = Array.isArray(days) ? days.map(day => day.trim()) : [];
 
+    // Check if all required fields are provided
     if (!trimmedName || !trimmedStartTime || !trimmedEndTime || !trimmedDays.length || !trimmedTeacher) {
         return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Validate time format (simple check for HH:mm)
+    const timeFormat = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    if (!timeFormat.test(trimmedStartTime) || !timeFormat.test(trimmedEndTime)) {
+        return res.status(400).json({ message: "Invalid time format. Use HH:mm" });
     }
 
     // Create a new Classroom document
@@ -191,7 +198,7 @@ app.post('/add/classroom', async (req, res) => {
         }
 
         // Update all students assigned to this teacher to also have the new classroom
-        const updatedTeachers = await Student.updateMany(
+        const updatedStudents = await Student.updateMany(
             { teacher: trimmedTeacher },
             { classroom: savedClassroom._id }
         );
@@ -200,7 +207,7 @@ app.post('/add/classroom', async (req, res) => {
             message: "Classroom added successfully, teacher and students updated",
             classroom: savedClassroom,
             teacher: updatedTeacher,
-            studentsUpdated: updatedTeachers.nModified
+            studentsUpdated: updatedStudents.nModified
         });
     } catch (error) {
         res.status(500).json({
@@ -209,6 +216,7 @@ app.post('/add/classroom', async (req, res) => {
         });
     }
 });
+
 
 
 
