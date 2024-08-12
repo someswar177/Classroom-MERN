@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../assets/css/ViewTimetable.css'
+import '../assets/css/ViewTimeTable.css'
 
 const ViewTimetable = () => {
     const [classrooms, setClassrooms] = useState([]);
