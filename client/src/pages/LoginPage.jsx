@@ -4,6 +4,7 @@ import backgroundImage from '../assets/login_bg.jpg';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
 
   const [formData, setFormData] = useState({
     email: '',
@@ -56,7 +57,7 @@ const LoginPage = () => {
   
         let response;
         if (role === "student") {
-          response = await fetch('http://localhost:8080/student/login', {
+          response = await fetch(`${apiUrl}/student/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ const LoginPage = () => {
             body: JSON.stringify(formData),
           });
         } else {
-          response = await fetch('http://localhost:8080/login', {
+          response = await fetch(`${apiUrl}/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

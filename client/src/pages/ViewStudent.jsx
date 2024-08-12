@@ -6,6 +6,7 @@ import AddStudent from '../components/AddStudent';
 import '../assets/css/ViewStudent.css';
 
 const ViewStudent = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
   const [students, setStudents] = useState([]);
   const [showAddStudent, setShowAddStudent] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,7 +22,7 @@ const ViewStudent = () => {
   }, []);
 
   const fetchStudents = () => {
-    fetch('http://localhost:8080/view/students')
+    fetch(`${apiUrl}/view/students`)
       .then(response => response.json())
       .then(data => {
         setStudents(data.students);
@@ -46,7 +47,7 @@ const ViewStudent = () => {
 
   const handleUpdateClick = async (studentId) => {
     try {
-      const response = await fetch(`http://localhost:8080/update/student/${studentId}`, {
+      const response = await fetch(`${apiUrl}/update/student/${studentId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ const ViewStudent = () => {
 
   const confirmDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/delete/student/${StudentToDelete._id}`, {
+      const response = await fetch(`${apiUrl}/delete/student/${StudentToDelete._id}`, {
         method: 'DELETE',
       });
       if (response.ok) {

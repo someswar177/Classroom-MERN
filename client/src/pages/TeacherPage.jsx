@@ -8,6 +8,7 @@ import '../assets/css/ViewStudent.css';
 import TeacherTimetable from './TeacherTimetable';
 
 const TeacherPage = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
   const { userId } = useParams(); // Extract the teacher's userId from URL
   const [students, setStudents] = useState([]);
   const [showAddStudent, setShowAddStudent] = useState(false);
@@ -24,7 +25,7 @@ const TeacherPage = () => {
   }, []);
 
   const fetchStudents = () => {
-    fetch('http://localhost:8080/view/students') // Adjust API endpoint if necessary
+    fetch(`${apiUrl}/view/students`) // Adjust API endpoint if necessary
       .then(response => response.json())
       .then(data => {
         // Filter students where student's teacher ID matches the current user ID
@@ -51,7 +52,7 @@ const TeacherPage = () => {
 
   const handleUpdateClick = async (studentId) => {
     try {
-      const response = await fetch(`http://localhost:8080/update/student/${studentId}`, {
+      const response = await fetch(`${apiUrl}/update/student/${studentId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -80,7 +81,7 @@ const TeacherPage = () => {
 
   const confirmDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/delete/student/${StudentToDelete._id}`, {
+      const response = await fetch(`${apiUrl}/delete/student/${StudentToDelete._id}`, {
         method: 'DELETE',
       });
       if (response.ok) {

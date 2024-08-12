@@ -3,6 +3,7 @@ import AddTimeTable from '../components/AddTimeTable';
 
 const TeacherTimetable = ({ id }) => {
   const [classrooms, setClassrooms] = useState([]);
+  const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
 
   useEffect(() => {
     fetchClassrooms();
@@ -10,7 +11,7 @@ const TeacherTimetable = ({ id }) => {
 
   const fetchClassrooms = async () => {
     try {
-      const response = await fetch('http://localhost:8080/view/classrooms');
+      const response = await fetch(`${apiUrl}/view/classrooms`);
       const data = await response.json();
       
       // Filter the classrooms based on the teacher's ID

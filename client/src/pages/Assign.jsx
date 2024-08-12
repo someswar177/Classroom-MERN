@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import AddTimeTable from '../components/AddTimeTable';
 
 const Assign = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
   const { id, email } = useParams(); // Getting teacherId and email from params
   const [classrooms, setClassrooms] = useState([]);
   const [students, setStudents] = useState([]);
@@ -22,7 +23,7 @@ const Assign = () => {
 
   const fetchClassrooms = async () => {
     try {
-      const response = await fetch('http://localhost:8080/view/classrooms');
+      const response = await fetch(`${apiUrl}/view/classrooms`);
       const data = await response.json();
       setClassrooms(data.classrooms);
     } catch (error) {
@@ -32,7 +33,7 @@ const Assign = () => {
 
   const fetchStudents = async () => {
     try {
-      const response = await fetch('http://localhost:8080/view/students');
+      const response = await fetch(`${apiUrl}/view/students`);
       const data = await response.json();
       setStudentsAssigned(data.students);
       setStudents(data.students.filter(s => !s.teacher)); // Filter students not assigned to any teacher
@@ -45,7 +46,7 @@ const Assign = () => {
     try {
       const teacherClassroom = classrooms.find(c => c.teacher && c.teacher._id === id);
 
-      await fetch('http://localhost:8080/assign/student', {
+      await fetch(`${apiUrl}/assign/student`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -63,7 +64,7 @@ const Assign = () => {
 
   const handleCreateTimetable = async () => {
     try {
-      await fetch('http://localhost:8080/create/timetable', {
+      await fetch(`${apiUrl}/create/timetable`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(timetable),

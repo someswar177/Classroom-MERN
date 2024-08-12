@@ -6,6 +6,7 @@ import AddClassroom from '../components/AddClassroom';
 import '../assets/css/ViewClassroom.css';
 
 const ViewClassroom = () => {
+    const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
     const [classrooms, setClassrooms] = useState([]);
     const [showAddClassroom, setShowAddClassroom] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -20,7 +21,7 @@ const ViewClassroom = () => {
     }, []);
 
     const fetchclassrooms = () => {
-        fetch('http://localhost:8080/view/classrooms')
+        fetch(`${apiUrl}/view/classrooms`)
             .then(response => response.json())
             .then(data => setClassrooms(data.classrooms))
             .catch(error => console.error('Error fetching data:', error));
@@ -41,7 +42,7 @@ const ViewClassroom = () => {
 
     const handleUpdateClick = async (classroomId) => {
         try {
-            const response = await fetch(`http://localhost:8080/update/classroom/${classroomId}`, {
+            const response = await fetch(`${apiUrl}/update/classroom/${classroomId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -71,7 +72,7 @@ const ViewClassroom = () => {
 
     const confirmDelete = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/delete/classroom/${classroomToDelete._id}`, {
+            const response = await fetch(`${apiUrl}/delete/classroom/${classroomToDelete._id}`, {
                 method: 'DELETE',
             });
             if (response.ok) {

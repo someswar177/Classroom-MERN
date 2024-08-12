@@ -6,6 +6,7 @@ import AddTeacher from '../components/AddTeacher';
 import '../assets/css/ViewTeacher.css';
 
 const ViewTeacher = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
   const [teachers, setTeachers] = useState([]);
   const [showAddTeacher, setShowAddTeacher] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,7 +22,7 @@ const ViewTeacher = () => {
   }, []);
 
   const fetchTeachers = () => {
-    fetch('http://localhost:8080/view/teachers')
+    fetch(`${apiUrl}/view/teachers`)
       .then(response => response.json())
       .then(data => setTeachers(data.teachers))
       .catch(error => console.error('Error fetching data:', error));
@@ -43,7 +44,7 @@ const ViewTeacher = () => {
 
   const handleUpdateClick = async (teacherId) => {
     try {
-      const response = await fetch(`http://localhost:8080/update/teacher/${teacherId}`, {
+      const response = await fetch(`${apiUrl}/update/teacher/${teacherId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +74,7 @@ const ViewTeacher = () => {
 
   const confirmDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/delete/teacher/${teacherToDelete._id}`, {
+      const response = await fetch(`${apiUrl}/delete/teacher/${teacherToDelete._id}`, {
         method: 'DELETE',
       });
       if (response.ok) {

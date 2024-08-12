@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import StudentTimetable from '../components/StudentTimetable';
 
 const StudentPage = () => {
+  const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
   const { userId } = useParams(); // Extract the student's userId from URL
   const [student, setStudent] = useState(null);
   const [classmates, setClassmates] = useState([]);
@@ -10,7 +11,7 @@ const StudentPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8080/view/students'); // Adjust API endpoint if necessary
+        const response = await fetch(`${apiUrl}/view/students`); // Adjust API endpoint if necessary
         const data = await response.json();
 
         // Find the student data

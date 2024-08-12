@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const AddTimeTable = ({ teacherId, classroomId }) => {
+    const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
     const [timetableData, setTimetableData] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const [newRow, setNewRow] = useState({
@@ -17,7 +18,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
 
     const fetchTimetable = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/view/timetable/${teacherId}/${classroomId}`);
+            const response = await fetch(`${apiUrl}/view/timetable/${teacherId}/${classroomId}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -32,7 +33,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
     const handleCreate = async () => {
         console.log("Creating timetable");
         try {
-            await fetch('http://localhost:8080/create/timetable', {
+            await fetch(`${apiUrl}/create/timetable`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...newRow, teacher: teacherId, classroom: classroomId })
@@ -56,7 +57,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
         console.log("Updating timetable");
         for (const entry of timetableData) {
             try {
-                await fetch(`http://localhost:8080/update/timetable/${entry._id}`, {
+                await fetch(`${apiUrl}/update/timetable/${entry._id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(entry)
@@ -70,7 +71,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
 
     const handleDelete = async (id) => {
         try {
-            await fetch(`http://localhost:8080/delete/timetable/${id}`, { method: 'DELETE' });
+            await fetch(`${apiUrl}/delete/timetable/${id}`, { method: 'DELETE' });
             fetchTimetable();
         } catch (error) {
             console.error('Error deleting timetable:', error);

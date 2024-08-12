@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AddClassroom = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
+    const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
 
     const navigate = useNavigate();
 
@@ -23,7 +24,7 @@ const AddClassroom = ({ isOpen, onClose }) => {
 
     const fetchTeachers = async () => {
         try {
-            const response = await fetch('http://localhost:8080/view/teachers');
+            const response = await fetch(`${apiUrl}/view/teachers`);
             const data = await response.json();
             
             // Filter teachers who don't have a classroom assigned
@@ -83,7 +84,7 @@ const AddClassroom = ({ isOpen, onClose }) => {
 
         if (validateForm()) {
             try {
-                const response = await fetch('http://localhost:8080/add/classroom', {
+                const response = await fetch(`${apiUrl}/add/classroom`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

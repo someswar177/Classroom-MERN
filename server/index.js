@@ -21,6 +21,11 @@ app.listen(PORT,()=>{
     console.log(`server is listening at http://localhost:${PORT}`);
 })
 
+const BASE_URL = process.env.BASE_URL;
+if(BASE_URL){ 
+    console.log(`Backend running at ${BASE_URL}`);
+}
+
 app.post('/signup', async (req, res) => {
     const { email, password, role } = req.body;
 

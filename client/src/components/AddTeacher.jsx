@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AddTeacher = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
+  const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -46,7 +47,7 @@ const AddTeacher = ({ isOpen, onClose }) => {
 
     if (validateForm()) {
       try {
-        const response = await fetch('http://localhost:8080/signup', {
+        const response = await fetch(`${apiUrl}/signup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const StudentTimetable = ({ teacherId, classroomId }) => {
+    const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
     const [timetableData, setTimetableData] = useState([]);
 
     useEffect(() => {
@@ -9,7 +10,7 @@ const StudentTimetable = ({ teacherId, classroomId }) => {
 
     const fetchTimetable = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/view/timetable/${teacherId}/${classroomId}`);
+            const response = await fetch(`${apiUrl}/view/timetable/${teacherId}/${classroomId}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

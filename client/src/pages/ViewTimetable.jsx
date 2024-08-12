@@ -4,9 +4,10 @@ import '../assets/css/ViewTimetable.css'
 
 const ViewTimetable = () => {
     const [classrooms, setClassrooms] = useState([]);
+    const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
 
     useEffect(() => {
-        axios.get('http://localhost:8080/classrooms/timetables')
+        axios.get(`${apiUrl}/classrooms/timetables`)
             .then(response => {
                 setClassrooms(response.data);
             })
