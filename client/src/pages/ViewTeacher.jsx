@@ -185,7 +185,7 @@ const ViewTeacher = () => {
                           onClick={() => handleAssignClassroom(teacher)}
                           className="bg-green-500 hover:bg-green-600 text-white py-1 px-4 rounded shadow flex items-center"
                         >
-                          &#x2022; Assign
+                          &#x2022; Assign Students
                         </button>
 
                       )

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaRegEdit, FaPlus } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import '../assets/css/ViewClassroom.css';
 
 const ViewClassroom = () => {
     const apiUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+    const [teachers, setTeachers] = useState([]);
     const [classrooms, setClassrooms] = useState([]);
     const [showAddClassroom, setShowAddClassroom] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -14,10 +15,17 @@ const ViewClassroom = () => {
     const [updatedClassroom, setUpdatedClassroom] = useState({});
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [classroomToDelete, setClassroomToDelete] = useState(null);
+    const [showTeacherDropdown, setShowTeacherDropdown] = useState(false);
+    const [selectedTeacher, setSelectedTeacher] = useState(null);
+    const [dropdownStates, setDropdownStates] = useState({});
+    const dropdownRefs = useRef({});
+
+
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchclassrooms();
+        handleAssignTeacher();
     }, []);
 
     const fetchclassrooms = () => {
@@ -96,9 +104,84 @@ const ViewClassroom = () => {
         classroom.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleAssignTeacher = (classroom) => {
-        navigate(`/assign/${classroom._id}/${0}/${classroom.name}`);
-      };
+    const handleAssignTeacher = (classroomId) => {
+        fetch(`${apiUrl}/view/teachers`)
+            .then(response => response.json())
+            .then(teachersData => {
+                const availableTeachers = teachersData.teachers.filter(teacher => !teacher.classroom || teacher.classroom.length === 0);
+                setTeachers(availableTeachers);
+                setDropdownStates(prevState => ({
+                    ...prevState,
+                    [classroomId]: !prevState[classroomId] // Toggle dropdown for the specific classroom
+                }));
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    };
+
+    const handleDropdownToggle = (classroomId) => {
+        setDropdownStates(prevState => ({
+            ...prevState,
+            [classroomId]: !prevState[classroomId] // Toggle dropdown for the specific classroom
+        }));
+    };
+
+    const handleTeacherSelection = async (classroomId, teacherId) => {
+        // Find the selected teacher
+        const selectedTeacher = teachers.find(teacher => teacher._id === teacherId);
+        if (!selectedTeacher) {
+            console.error('Teacher not found');
+            return;
+        }
+    
+        // Prepare the request body
+        const requestBody = {
+            teacher: selectedTeacher._id,
+            classroom: classroomId
+        };
+    
+        try {
+            // Make a PUT request to the backend
+            const response = await fetch(`${apiUrl}/assign/teacher`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+    
+            // Handle response
+            const data = await response.json();
+            if (response.ok) {
+                console.log(`Assigned teacher ${selectedTeacher.email} to classroom ${classroomId}`);
+                setSelectedTeacher(selectedTeacher);
+                setDropdownStates(prevState => ({
+                    ...prevState,
+                    [classroomId]: false // Close dropdown after selecting
+                }));
+                // Optionally, refetch classroom data here if needed
+                fetchclassrooms();
+            } else {
+                console.error('Failed to assign teacher:', data.message);
+            }
+        } catch (error) {
+            console.error('Error assigning teacher:', error.message);
+        }
+    };
+    
+
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (Object.values(dropdownRefs.current).some(ref => ref && ref.contains(event.target))) {
+                return;
+            }
+            setDropdownStates({});
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
 
     return (
         <div className="container-ss container mx-auto p-4">
@@ -203,15 +286,31 @@ const ViewClassroom = () => {
                                                 className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
                                             />
                                         ) : (
-                                            classroom.teacher?.email || 
-                                            <button
-                                            onClick={() => handleAssignTeacher(classroom)}
-                                            className="bg-green-500 hover:bg-green-600 text-white py-1 px-4 rounded shadow flex items-center"
-                                          >
-                                            &#x2022; Assign
-                                          </button>
+                                            classroom.teacher?.email || (
+                                                <div className="relative inline-block text-left">
+                                                    <select
+                                                        onChange={(e) => handleTeacherSelection(classroom._id, e.target.value)}
+                                                        className="border border-gray-300 rounded py-1 px-2"
+                                                    >
+                                                        <option value="">Select a Teacher</option>
+                                                        {teachers.map(teacher => (
+                                                            <option key={teacher._id} value={teacher._id}>
+                                                                {teacher.email}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {/* Optional: Display selected teacher */}
+                                                    {selectedTeacher && selectedTeacher.classroom === classroom._id && (
+                                                        <span className="ml-2 text-green-500">{selectedTeacher.email}</span>
+                                                    )}
+                                                </div>
+                                            )
                                         )}
                                     </td>
+
+
+
+
 
                                     <td className="py-2 px-4 flex items-center space-x-4">
                                         {editingClassroomId === classroom._id ? (
@@ -272,6 +371,28 @@ const ViewClassroom = () => {
                     </div>
                 </div>
             )}
+            {showTeacherDropdown && (
+                <div className="absolute mt-2 w-48 bg-white border border-gray-300 rounded shadow-lg z-10">
+                    <ul>
+                        {teachers.map((teacher) => (
+                            <li key={teacher._id}>
+                                <button
+                                    onClick={() => {
+                                        setSelectedTeacher(teacher);
+                                        setShowTeacherDropdown(false);
+                                        // Handle assigning the selected teacher here
+                                        console.log(`Assigned teacher ${teacher.email} to classroom`);
+                                    }}
+                                    className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                                >
+                                    {teacher.email}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
         </div>
     );
 };

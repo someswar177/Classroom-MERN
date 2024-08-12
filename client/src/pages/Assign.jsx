@@ -82,11 +82,11 @@ const Assign = () => {
   const teacherClassroom = classrooms.find(c => c.teacher && c.teacher._id === id);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Assign Student to Teacher: {email}</h1>
+    <div className="container-ss container mx-auto p-4">
 
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold mb-2">Assign Student to Classroom</h2>
+      <div className="flex space-x-8 mb-4 ">
+      <h1 className="text-2xl font-bold mb-4">Assign Student to Teacher and Classroom: {email}</h1>
+        {/* <h2 className="text-xl font-semibold mb-2">Assign Student to Classroom</h2> */}
         <div className="flex space-x-4">
           <select
             value={selectedStudent}
@@ -111,7 +111,7 @@ const Assign = () => {
         <h2 className="text-xl font-semibold mb-2">Assigned Students - {assignedStudents.length}</h2>
         <div>
           {assignedStudents.length > 0 ? (
-            <table className="min-w-full border border-gray-300">
+            <table className="min-w-full border-gray-300">
               <thead className="bg-gray-100 border-b">
                 <tr>
                   <th className="px-4 py-2 border-r">Email</th>
@@ -136,46 +136,6 @@ const Assign = () => {
       </div>
 
       <AddTimeTable teacherId={id} classroomId={teacherClassroom ? teacherClassroom._id : null} />
-
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold mb-2">Create Timetable</h2>
-        <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Classroom ID"
-            value={timetable.classroom}
-            onChange={(e) => setTimetable({ ...timetable, classroom: e.target.value })}
-            className="border border-gray-300 p-2 rounded w-full"
-          />
-          <input
-            type="text"
-            placeholder="Start Time"
-            value={timetable.startTime}
-            onChange={(e) => setTimetable({ ...timetable, startTime: e.target.value })}
-            className="border border-gray-300 p-2 rounded w-full"
-          />
-          <input
-            type="text"
-            placeholder="End Time"
-            value={timetable.endTime}
-            onChange={(e) => setTimetable({ ...timetable, endTime: e.target.value })}
-            className="border border-gray-300 p-2 rounded w-full"
-          />
-          <input
-            type="text"
-            placeholder="Days (comma separated)"
-            value={timetable.days}
-            onChange={(e) => setTimetable({ ...timetable, days: e.target.value.split(',') })}
-            className="border border-gray-300 p-2 rounded w-full"
-          />
-          <button
-            onClick={handleCreateTimetable}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-          >
-            Create Timetable
-          </button>
-        </div>
-      </div>
     </div>
   );
 };

@@ -89,7 +89,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container-ss container mx-auto p-4">
             <h2 className="text-xl font-semibold mb-2">Timetable</h2>
 
             {timetableData.length === 0 && !isEditing ? (
@@ -101,7 +101,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
                 </button>
             ) : (
                 <>
-                    <table className="min-w-full border border-gray-300 mb-4">
+                    <table className="min-w-full border-gray-300 mb-4">
                         <thead className="bg-gray-100 border-b">
                             <tr>
                                 <th className="px-4 py-2 border-r">Subject</th>
