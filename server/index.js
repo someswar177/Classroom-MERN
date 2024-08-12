@@ -57,7 +57,7 @@ app.post('/login', async (req, res) => {
     const trimmedPassword = password.trim();
     const trimmedRole = role.trim();
 
-    console.log(trimmedEmail, "email");
+    console.log(req.body);
 
     try {
         const user = await User.findOne({ email: trimmedEmail });
@@ -277,6 +277,55 @@ app.delete('/delete/classroom/:id', async (req, res) => {
 
 
 app.post('/student/create', async (req, res) => {
+    const { email, password, role, teacher } = req.body;
+    console.log(req.body)
+
+    // Trim the input data to remove any leading/trailing whitespace
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+    const trimmedRole = role.trim();
+    
+    let classroomId = null;
+
+    try {
+        if (teacher) {
+            const teacherExists = await User.findById(teacher).populate('classroom');
+            if (teacherExists && teacherExists.classroom) {
+                classroomId = teacherExists.classroom._id;
+            } else {
+                // Handle case where teacher is not found or has no classroom
+                return res.status(404).send({ message: 'Teacher not found or teacher has no assigned classroom' });
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({ message: 'Error fetching teacher data', error: error.message });
+    }
+
+    const student = new Student({
+        email: trimmedEmail,
+        password: trimmedPassword,
+        role: trimmedRole,
+        teacher: teacher || null,
+        classroom: classroomId || null
+    });
+    console.log(student);
+
+    try {
+        await student.save();
+        res.status(200).send({
+            message: 'Student created successfully',
+            student
+        });
+    } catch (error) {
+        res.status(500).send({
+            message: 'Failed to create student',
+            error: error.message
+        });
+    }
+});
+
+app.post('/student/login', async (req, res) => {
     const { email, password, role } = req.body;
 
     // Trim the input data to remove any leading/trailing whitespace
@@ -284,21 +333,27 @@ app.post('/student/create', async (req, res) => {
     const trimmedPassword = password.trim();
     const trimmedRole = role.trim();
 
-    const student = new Student({
-        email: trimmedEmail,
-        password: trimmedPassword,
-        role: trimmedRole
-    });
+    console.log(trimmedEmail);
 
     try {
-        await student.save();
-        res.status(200).send({
-            message: `User created successfully`,
-            student
+        const user = await Student.findOne({ email: trimmedEmail });
+        console.log(user);
+
+        if (!user) {
+            return res.status(400).json({ msg: 'User Not found' });
+        }
+
+        if (user.password !== trimmedPassword) {
+            return res.status(400).json({ msg: 'Invalid Credentials' });
+        }
+
+        return res.status(200).send({
+            message: `User Present`,
+            user:user
         });
     } catch (error) {
         res.status(500).send({
-            message: `Email not created`,
+            message: `Not verified`,
             error: error.message
         });
     }

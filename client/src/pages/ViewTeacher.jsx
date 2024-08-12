@@ -98,7 +98,7 @@ const ViewTeacher = () => {
   );
 
   const handleAssignClassroom = (teacher) => {
-    navigate(`/assign/${teacher._id}/${teacher.email}/${0}`); // Pass the teacher's email directly
+    navigate(`/assign/${teacher._id}`); // Pass the teacher's email directly
   };
 
   return (

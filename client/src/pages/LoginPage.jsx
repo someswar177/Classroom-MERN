@@ -49,26 +49,38 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (validateForm()) {
       try {
-        const response = await fetch('http://localhost:8080/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-
+        const { role } = formData; // Extract role from formData
+  
+        let response;
+        if (role === "student") {
+          response = await fetch('http://localhost:8080/student/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
+        } else {
+          response = await fetch('http://localhost:8080/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
+        }
+  
         const data = await response.json();
         console.log(data);
-
+  
         if (data.message === "User Present") {
           console.log(data.user._id);
-          const { role } = formData; // Extract role from formData
-
+  
           const userId = data.user._id; // Assuming the backend response includes a userId
-
+  
           if (role === "principal") {
             navigate('/principal');
           } else if (role === "teacher") {
@@ -76,7 +88,6 @@ const LoginPage = () => {
           } else if (role === "student") {
             navigate(`/student/${userId}`);
           }
-
         } else {
           console.log("else");
           navigate('/');
@@ -86,7 +97,7 @@ const LoginPage = () => {
         console.error('Error:', error);
       }
     }
-  };
+  };  
 
   return (
     <section className="bg-gray-50" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover' }}>

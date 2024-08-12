@@ -23,6 +23,7 @@ const AddTimeTable = ({ teacherId, classroomId }) => {
             }
             const data = await response.json();
             setTimetableData(data.timetables || []);
+            console.log(data)
         } catch (error) {
             console.error('Error fetching timetable:', error);
         }

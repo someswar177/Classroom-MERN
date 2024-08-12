@@ -10,6 +10,7 @@ import Assign from './pages/Assign';
 import ViewTimetable from './pages/ViewTimetable';
 import Navbar from './components/Navbar';
 import NavbarTeacher from './components/NavbarTeacher';
+import StudentPage from './pages/StudentPage';
 
 function App() {
   return (
@@ -31,7 +32,7 @@ function App() {
                 <Route path="/view/classrooms" element={<ViewClassroom />} />
                 <Route path="/view/students" element={<ViewStudent />} />
                 <Route path="/view/timetables" element={<ViewTimetable />} />
-                <Route path="/assign/:id/:email/:name" element={<Assign />} />
+                <Route path="/assign/:id" element={<Assign />} />
               </Routes>
             </>
           }
@@ -43,6 +44,17 @@ function App() {
             <NavbarTeacher/>
               <Routes>
                 <Route path="/" element={<TeacherPage />} />
+              </Routes>
+            </>
+          }
+        />
+        <Route
+          path='/student/:userId'
+          element={
+            <>
+            <NavbarTeacher/>
+              <Routes>
+                <Route path="/" element={<StudentPage />} />
               </Routes>
             </>
           }

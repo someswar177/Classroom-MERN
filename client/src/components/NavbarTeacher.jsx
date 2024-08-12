@@ -21,7 +21,7 @@ const NavbarTeacher = () => {
             <div className="hidden sm:block sm:ml-6">
               <div className="flex space-x-4">
                 <NavLink to="/teacher">Home</NavLink>
-                <NavLink to="/teacher/students">Students</NavLink>
+                <NavLink to="/teacher/:id">Students</NavLink>
                 <NavLink to="/teacher/timetable">Timetables</NavLink>
                 {/* <button
                   onClick={() => setIsProfileModalOpen(true)}

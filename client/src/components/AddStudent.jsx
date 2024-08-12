@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const AddStudent = ({ isOpen, onClose }) => {
+const AddStudent = ({ isOpen, onClose, teacherId }) => {
     if (!isOpen) return null;
     const navigate = useNavigate();
   
@@ -43,7 +43,7 @@ const AddStudent = ({ isOpen, onClose }) => {
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-  
+    
       if (validateForm()) {
         try {
           const response = await fetch('http://localhost:8080/student/create', {
@@ -51,24 +51,26 @@ const AddStudent = ({ isOpen, onClose }) => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify({ ...formData, teacher: teacherId }), // Include teacherId if available
           });
-  
+    
           const data = await response.json();
-  
-          if (data.message === "User created successfully") {
-            // Close the modal and navigate to the teacher view
+    
+          if (data.message === "Student created successfully") {
             onClose();  // Close the modal
-            navigate('/view/students');  // Navigate to the view teachers page
+            if (teacherId) {
+              navigate(`/teacher/${teacherId}`);  // Navigate to teacher page if teacherId is present
+            } else {
+              navigate('/view/students');  // Otherwise navigate to view students page
+            }
           } else {
-            // Handle the case where user creation failed
             console.error('Failed to create user:', data.message);
           }
         } catch (error) {
           console.error('Error:', error);
         }
       }
-    };
+    };    
   
     return (
       <div>
